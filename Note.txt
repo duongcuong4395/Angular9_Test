@@ -39,7 +39,29 @@ II. Debugging with Angular 9 Ivy
     Another big improvement introduced in Angular 9 and Angular Ivy is the debugging experience. The compiler now can detect more errors and throw them in a more “readable” fashion.
 
     1. activate template checking in tsconfig.json
-    
+    {
+        // ...
+        "angularCompilerOptions": {
+            "fullTemplateTypeCheck": true,
+            "strictInjectionParameters": true,
+            "strictTemplates": true
+        }
+    }   
+    => This type checking will allow us to prevent typos and the incorrect usage of TypeScript types.
+
+III. Angular Ivy Validation for @Input()
+
+    1. add @Input() input_Name: string; into component(another appComponent)
+    2. and bind it in app.component.html:
+        <component_name [input_Name]="title"></component_name>
+    3. and then change app.component.ts
+        title = null;
+    => Error:
+        Type 'null' is not assignable to type 'string'.
+           <app-tv-rating-form [input_Name]="title"></app-tv-rating-form>
+    => Fix:
+        The right way to fix this, though, would be to make title on the form nullable:
+            @Input() input_Name: string | null ;
 performance
     https://blog.mgechev.com/2016/08/14/ahead-of-time-compilation-angular-offline-precompilation/
     https://techtalk.vn/blog/posts/angular2-cai-thien-toc-do-cua-mot-ung-dung-angular-voi-lazyloading-and-preloading

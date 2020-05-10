@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 
 @Component({
@@ -8,11 +8,15 @@ import { FormGroup, FormControl, Validators } from '@angular/forms';
 })
 export class TvRatingFormComponent implements OnInit {
 
+  //@Input() title: string; => error
+  //The right way to fix this, though, would be to make title on the form nullable:
+  @Input() titleNew: string | null;
+
   tvShows = [
-    { title: 'Better call Saul!' },
-    { title: 'Breaking Bad' },
-    { title: 'Lost' },
-    { title: 'Mad men' }
+    { name: 'Better call Saul!' },
+    { name: 'Breaking Bad' },
+    { name: 'Lost' },
+    { name: 'Mad men' }
   ];
 
   constructor() { }
