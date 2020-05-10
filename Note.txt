@@ -1,0 +1,40 @@
+install command line for angular(last version)
+
+let’s create an Angular application:
+1. ng new App_Name --create-application=false --enableIvy=true --strict
+   Note: 
+    --create-application=false  will tell the CLI to only generate workspace files. This will help us better organize our code when we need to have more than one app and multiple libraries.
+    --strict will               add stricter rules to enforce more TypeScript typing and code cleanliness.       
+2. enable enableIvy
+    Go to file tsconfig.json
+    add:
+        "angularCompilerOptions": {
+            "fullTemplateTypeCheck": true,
+            "strictInjectionParameters": true,
+            "enableIvy": true
+        }
+3. let’s add a new app.
+    ng generate application App_Name
+
+4. install bootstrap and ng-bootstrap
+    npm install bootstrap @ng-bootstrap/ng-bootstrap
+
+5. Another improvement on Angular 9 is i18n (internationalization). Previously, developers would need to run a full build for every locale in an app. Angular 9 instead lets us build an app once and generate all i18n files in a post-build process, significantly reducing build time. Since ng-bootstrap has a dependency on i18n, we’ll add the new package to our project
+    ng add @angular/localize
+6. add the Bootstrap theme to our app’s styles.scss
+    @import "~bootstrap/scss/bootstrap";
+7. include NgbModule and ReactiveFormsModule in our AppModule on app.module.ts
+    import { ReactiveFormsModule } from '@angular/forms';
+    import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+
+    @NgModule({
+    imports: [
+        // ...
+        ReactiveFormsModule,
+        NgbModule
+    ],
+    })
+
+performance
+    https://blog.mgechev.com/2016/08/14/ahead-of-time-compilation-angular-offline-precompilation/
+    https://techtalk.vn/blog/posts/angular2-cai-thien-toc-do-cua-mot-ung-dung-angular-voi-lazyloading-and-preloading
