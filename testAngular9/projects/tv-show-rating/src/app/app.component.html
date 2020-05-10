@@ -1,6 +1,9 @@
 <div class="container">
   <div class="row">
     <div class="col-6">
+        <h2>
+            {{title$ | async}}
+          </h2>
       <app-tv-rating-form [titleNew]="title"></app-tv-rating-form>
     </div>
   </div>

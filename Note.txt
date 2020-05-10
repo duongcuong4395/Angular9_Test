@@ -62,6 +62,67 @@ III. Angular Ivy Validation for @Input()
     => Fix:
         The right way to fix this, though, would be to make title on the form nullable:
             @Input() input_Name: string | null ;
+IV. The Expression Changed AfterIt Has Been Checked Error in Angular 9 Ivy
+    One of the most dreaded errors in Angular development is the ExpressionChangedAfterItHasBeenCheckedError. Thankfully, Ivy outputs the error in a clearer way, making it easier to find where the problem comes from.
+    So, let’s introduce an ExpressionChangedAfterItHasBeenCheckedError error. To do that, first, we’ll generate a service:
+
+    1. generate service 
+        ng generate service service_Name
+        ex: ng generate service title
+    2. add a BehaviorSubject, and methods to access the Observable and to emit a new value.(In service)
+        export class TitleService {
+            private bs = new BehaviorSubject < string > ('');
+            constructor() {}
+            get title$() {
+                return this.bs.asObservable();
+            }
+            update(title: string) {
+                this.bs.next(title);
+            }
+        }
+    3. add this to app.component.html
+        <!-- ... -->
+        <div class="col-6">
+            <h2>
+            {{title$ | async}}
+            </h2>
+            <app-tv-rating-form [title]="title"></app-tv-rating-form>
+        </div>
+    4. in app.component.ts, we’ll inject the TitleService:
+        // ...
+        title$: Observable < string > ;
+
+        constructor(
+            private titleSvc: TitleService
+        ) {}
+
+        ngOnInit() {
+            this.title$ = this.titleSvc.title$;
+        }
+        // ...
+    5. in tv-rating-form.component.ts, 
+        we’ll inject TitleService and update the title of the AppComponent, 
+        which will throw an ExpressionChangedAfterItHasBeenCheckedError error.
+    => Error:
+        ExpressionChangedAfterItHasBeenCheckedError: 
+            Expression has changed after it was checked. 
+            Previous value: 'undefined'. Current value: 'new title!'. 
+            It seems like the view has been created after its parent 
+            and its children have been dirty checked. 
+            Has it been created in a change detection hook?
+    => Fix:
+        wrapping the service call with setTimeout
+            setTimeout(() => {
+                this.titleSvc.update('new title!');
+            });
+    To understand why the ExpressionChangedAfterItHasBeenCheckedError error 
+    happens and explore other possibilities, 
+    go to 'https://indepth.dev/everything-you-need-to-know-about-the-expressionchangedafterithasbeencheckederror-error/' 
+    on the topic is worth reading.
+
+Angular Ivy allows us to have errors presented in a clearer way and helps enforce TypeScript typing in our code. In the following section, we’ll cover some common scenarios where we’ll take advantage of Ivy and debugging.
+
+
 performance
     https://blog.mgechev.com/2016/08/14/ahead-of-time-compilation-angular-offline-precompilation/
     https://techtalk.vn/blog/posts/angular2-cai-thien-toc-do-cua-mot-ung-dung-angular-voi-lazyloading-and-preloading

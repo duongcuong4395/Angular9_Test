@@ -1,4 +1,6 @@
 import { Component } from '@angular/core';
+import { Observable } from 'rxjs';
+import { TitleService } from './tv-rating-form/title.service';
 
 @Component({
   selector: 'app-root',
@@ -6,8 +8,19 @@ import { Component } from '@angular/core';
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent {
-  title = null;
+   title = null;
+// ...
+title$: Observable < string > ;
+constructor(
+  private titleSvc: TitleService
+) {
 
+}
+
+ngOnInit() {
+  this.title$ = this.titleSvc.title$;
+}
+// ...
 
 
 }

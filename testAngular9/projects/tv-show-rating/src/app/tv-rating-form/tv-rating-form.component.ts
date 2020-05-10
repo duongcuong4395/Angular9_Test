@@ -1,5 +1,6 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
+import { TitleService } from './title.service';
 
 @Component({
   selector: 'app-tv-rating-form',
@@ -19,9 +20,14 @@ export class TvRatingFormComponent implements OnInit {
     { name: 'Mad men' }
   ];
 
-  constructor() { }
+  constructor(
+    private titleSvc: TitleService
+  ) { }
 
   ngOnInit(): void {
+    setTimeout(() => {
+      this.titleSvc.update('new title!');
+    });
   }
 
   form = new FormGroup({
