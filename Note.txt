@@ -120,7 +120,92 @@ IV. The Expression Changed AfterIt Has Been Checked Error in Angular 9 Ivy
     go to 'https://indepth.dev/everything-you-need-to-know-about-the-expressionchangedafterithasbeencheckederror-error/' 
     on the topic is worth reading.
 
-Angular Ivy allows us to have errors presented in a clearer way and helps enforce TypeScript typing in our code. In the following section, we’ll cover some common scenarios where we’ll take advantage of Ivy and debugging.
+    Angular Ivy allows us to have errors presented in a clearer way 
+    and helps enforce TypeScript typing in our code. 
+    In the following section, we’ll cover some common scenarios 
+    where we’ll take advantage of Ivy and debugging.
+
+V. Saving Data in a Database
+    1. create a Firebase Project. 
+    Then, we’ll install the required dependencies.
+        npm install @angular/fire firebase
+    2. In the Firebase Console’s project settings, 
+    we’ll get its configuration and add them to environment.ts 
+    and environment.prod.ts:
+        export const environment = {
+            // ...
+            firebase: {
+                apiKey: '{your-api-key}',
+                authDomain: '{your-project-id}.firebaseapp.com',
+                databaseURL: 'https://{your-project-id}.firebaseio.com',
+                projectId: '{your-project-id}',
+                storageBucket: '{your-project-id}.appspot.com',
+                messagingSenderId: '{your-messaging-id}',
+                appId: '{your-app-id}'
+            }
+        };
+    3. import the necessary modules in app.module.ts:
+        import { AngularFireModule } from '@angular/fire';
+        import { AngularFirestoreModule } from '@angular/fire/firestore';
+        import { environment } from '../environments/environment';
+
+        @NgModule({
+            // ...
+            imports: [
+                // ...
+                AngularFireModule.initializeApp(environment.firebase),
+                AngularFirestoreModule,
+            ],
+            // ...
+        })
+    4. in tv-rating-form.component.ts, 
+    we’ll inject the AngularFirestore service and save a new rating 
+    on form submission:
+        import { AngularFirestore } from '@angular/fire/firestore';
+
+        export class TvRatingFormComponent implements OnInit {
+            constructor(
+                // ...
+                private af: AngularFirestore,
+            ) { }
+            async submit(event: any) {
+                this.form.disable();
+                await this.af.collection('ratings').add(this.form.value);
+                this.form.enable();
+                this.form.reset();
+            }
+        }
+    5. list all the ratings into AppComponent. 
+    in app.component.ts, we’ll get the data from the collection:
+        import { AngularFirestore } from '@angular/fire/firestore';
+
+        export class AppComponent implements OnInit {
+            // ... 
+            ratings$: Observable<any>;
+
+            constructor(
+                // ...
+                private af: AngularFirestore
+            ) { }
+
+            ngOnInit() {
+                // ...
+                this.ratings$ = this.af.collection('ratings').valueChanges();
+            }
+        }
+    6. in app.component.html, we’ll add a list of ratings:
+        <div class="container">
+            <div class="row">
+                // ...
+                <div class="col-6">
+                <div>
+                    <p *ngFor="let rating of ratings$ | async">
+                    {{rating.tvShow}} ({{rating.rating}})
+                    </p>
+                </div>
+                </div>
+            </div>
+        </div>
 
 
 performance

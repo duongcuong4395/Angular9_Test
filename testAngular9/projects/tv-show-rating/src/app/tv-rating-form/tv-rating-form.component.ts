@@ -1,12 +1,13 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { TitleService } from './title.service';
-
+import { AngularFirestore } from '@angular/fire/firestore';
 @Component({
   selector: 'app-tv-rating-form',
   templateUrl: './tv-rating-form.component.html',
   styleUrls: ['./tv-rating-form.component.scss']
 })
+
 export class TvRatingFormComponent implements OnInit {
 
   //@Input() title: string; => error
@@ -21,7 +22,8 @@ export class TvRatingFormComponent implements OnInit {
   ];
 
   constructor(
-    private titleSvc: TitleService
+    private titleSvc: TitleService,
+    private af: AngularFirestore,
   ) { }
 
   ngOnInit(): void {
@@ -35,8 +37,17 @@ export class TvRatingFormComponent implements OnInit {
     rating: new FormControl('', Validators.required),
   });
 
+  /*
   submit() {
     alert(JSON.stringify(this.form.value));
+    this.form.reset();
+  }
+  */
+
+  async submit() {
+    this.form.disable();
+    await this.af.collection('ratings').add(this.form.value);
+    this.form.enable();
     this.form.reset();
   }
 
